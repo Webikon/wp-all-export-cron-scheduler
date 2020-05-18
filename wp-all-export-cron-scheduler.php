@@ -44,3 +44,17 @@ register_deactivation_hook(__FILE__, function () {});
  * Uninstall hook.
  */
 register_uninstall_hook(__FILE__, function () {});
+
+add_action('init', function () {
+    if (class_exists('PMXE_Plugin')) {
+
+        // Global constants
+        define('WPAE_CRSCH_VERSION', '1.0.0');
+        define('WPAE_CRSCH_DIR', plugin_dir_path(__FILE__));
+        define('WPAE_CRSCH_URL', plugin_dir_url(__FILE__));
+        define('WPAE_CRSCH_TD', 'wp-all-export-cron-scheduler');
+
+        // Includes
+        require_once 'inc/AdminSettings.php';
+    }
+});
