@@ -68,6 +68,41 @@ class AdminSettings
      * Register settings callback
      */
     public function registerSettingsCallback()
-    {}
+    {
+        $exports = get_option('wpae_cron_scheduler_exports') ?: [''];
+
+        $wpae_exports = WPAE::getExports();
+        ?>
+
+        <ul id="wpae-crsch-exports-list">
+            <?php foreach ($exports as $export_id): ?>
+                <li class="wpae-crsch-export-item">
+                    <select name="wpae_cron_scheduler_exports[]">
+                        <option value="">-- <?php _e('Select an export from the list', WPAE_CRSCH_TD) ?> --</option>
+
+                        <?php foreach ($wpae_exports as $wpae_export): ?>
+                            <option value="<?php echo $wpae_export->id ?>" <?php echo $wpae_export->id == $export_id ? 'selected' : '' ?>>
+                                <?php echo "#ID:$wpae_export->id - $wpae_export->friendly_name" ?>
+                            </option>
+                        <?php endforeach ?>
+                    </select>
+
+                    <span id="delete-link">
+                        <a href="#" class="delete js-wpae-crsch-remove-item">
+                            <?php _e('Remove', WPAE_CRSCH_TD) ?>
+                        </a>
+                    </span>
+                </li>
+            <?php endforeach ?>
+        </ul>
+
+        <div>
+            <button class="button js-wpae-crsch-add-item" type="button">
+                + <?php _e('Add export', WPAE_CRSCH_TD) ?>
+            </button>
+        </div>
+
+        <?php
+    }
 }
 new AdminSettings;

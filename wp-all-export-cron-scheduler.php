@@ -56,5 +56,17 @@ add_action('init', function () {
 
         // Includes
         require_once 'inc/AdminSettings.php';
+        require_once 'inc/WPAE.php';
     }
+
+    /**
+     * Admin assets
+     */
+    add_action('admin_enqueue_scripts', function ($hook) {
+        if ($hook != 'settings_page_wpae-cron-scheduler') {
+            return;
+        }
+
+        wp_enqueue_script('wpae_crsch_admin', WPAE_CRSCH_URL . 'assets/js/wpae-crsch-admin.js', [], WPAE_CRSCH_VERSION);
+    });
 });
