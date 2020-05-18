@@ -38,12 +38,31 @@ register_activation_hook(__FILE__, function () {});
 /**
  * Deactivation hook.
  */
-register_deactivation_hook(__FILE__, function () {});
+register_deactivation_hook(__FILE__, function () {
+    $cron_jobs = new WpaeCrsch\CronJobs;
+
+    if ($cron_jobs->getEvents()) {
+        $cron_jobs->remove();
+    }
+});
 
 /**
  * Uninstall hook.
  */
-register_uninstall_hook(__FILE__, function () {});
+register_uninstall_hook(__FILE__, function () {
+    // If uninstall.php is not called by WordPress, die
+    if (!defined('WP_UNINSTALL_PLUGIN')) {
+        die;
+    }
+
+    $cron_jobs = new WpaeCrsch\CronJobs;
+
+    if ($cron_jobs->getEvents()) {
+        $cron_jobs->remove();
+    }
+
+    delete_option('wpae_cron_scheduler_exports');
+});
 
 add_action('init', function () {
     if (class_exists('PMXE_Plugin')) {
