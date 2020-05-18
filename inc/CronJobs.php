@@ -7,25 +7,19 @@ use PMXE_Export_Record;
 
 class CronJobs
 {
-    public function __construct()
-    {
-        add_action('init', [$this, 'define']);
-        add_action('init', [$this, 'add']);
-    }
-
     /**
      * Define cron jobs for automated exports.
      */
-    public function define()
+    public static function define()
     {
         // Get cron jobs key from WP All Export
         $cron_job_key = PMXE_Plugin::getInstance()->getOption('cron_job_key');
 
-        if (!$this->getEvents()) {
+        if (!self::getEvents()) {
             return;
         }
 
-        foreach ($this->getEvents() as $id => $name) {
+        foreach (self::getEvents() as $id => $name) {
             // This check needs to be run every 5-10 minutes
             add_action($name . '_exec', function () use ($id) {
                 wp_remote_get(home_url("/wp-load.php?export_key=$cron_job_key&export_id=$id&action=processing"), array('timeout' => 600));
@@ -41,13 +35,13 @@ class CronJobs
     /**
      * Add cron jobs events.
      */
-    public function add()
+    public static function add()
     {
-        if (!$this->getEvents()) {
+        if (!self::getEvents()) {
             return;
         }
 
-        foreach ($this->getEvents() as $id => $name) {
+        foreach (self::getEvents() as $id => $name) {
             if (!wp_next_scheduled($name . '_exec')) {
                 // Run execs every 5 minutes
                 wp_schedule_event(time() + 300, MINUTE_IN_SECONDS * 5, $name . '_exec');
@@ -65,13 +59,13 @@ class CronJobs
     /**
      * Remove cron jobs events.
      */
-    public function remove()
+    public static function remove()
     {
-        if (!$this->getEvents()) {
+        if (!self::getEvents()) {
             return;
         }
 
-        foreach ($this->getEvents() as $name) {
+        foreach (self::getEvents() as $name) {
             if (wp_next_scheduled($name . '_exec')) {
                 wp_clear_scheduled_hook($name . '_exec');
             }
@@ -87,7 +81,7 @@ class CronJobs
      *
      * @return array
      */
-    public function getEvents()
+    public static function getEvents()
     {
         $exports = get_option('wpae_cron_scheduler_exports');
 

@@ -78,6 +78,10 @@ add_action('init', function () {
     require_once 'inc/WPAE.php';
     require_once 'inc/CronJobs.php';
 
+    // Cron jobs define/add
+    WpaeCrsch\CronJobs::define();
+    WpaeCrsch\CronJobs::add();
+
     /**
      * Admin assets
      */
