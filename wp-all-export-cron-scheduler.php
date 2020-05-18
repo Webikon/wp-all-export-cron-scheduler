@@ -57,6 +57,7 @@ add_action('init', function () {
         // Includes
         require_once 'inc/AdminSettings.php';
         require_once 'inc/WPAE.php';
+        require_once 'inc/CronJobs.php';
     }
 
     /**
