@@ -30,10 +30,23 @@
 // Security
 defined('ABSPATH') or exit;
 
+// Global constants
+define('WPAE_CRSCH_VERSION', '1.0.0');
+define('WPAE_CRSCH_DIR', plugin_dir_path(__FILE__));
+define('WPAE_CRSCH_URL', plugin_dir_url(__FILE__));
+define('WPAE_CRSCH_TD', 'wp-all-export-cron-scheduler');
+
 /**
  * Activate the plugin.
  */
-register_activation_hook(__FILE__, function () {});
+register_activation_hook(__FILE__, function () {
+    // Die WordPress if is not activated WP All Export plugin
+    if (!is_plugin_active('wp-all-export-pro/wp-all-export-pro.php') || !class_exists('PMXE_Plugin')) {
+        wp_die('Sorry, but this plugin requires the WP All Export plugin to be installed and active. <br><a href="' . admin_url( 'plugins.php' ) . '">&laquo; Return to plugins</a>');
+    }
+
+    register_uninstall_hook(__FILE__, 'wpae_crsch_uninstall_hook');
+});
 
 /**
  * Deactivation hook.
@@ -47,14 +60,9 @@ register_deactivation_hook(__FILE__, function () {
 });
 
 /**
- * Uninstall hook.
+ * Uninstall plugin.
  */
-register_uninstall_hook(__FILE__, function () {
-    // If uninstall.php is not called by WordPress, die
-    if (!defined('WP_UNINSTALL_PLUGIN')) {
-        die;
-    }
-
+function wpae_crsch_uninstall_hook() {
     $cron_jobs = new WpaeCrsch\CronJobs;
 
     if ($cron_jobs->getEvents()) {
@@ -62,22 +70,13 @@ register_uninstall_hook(__FILE__, function () {
     }
 
     delete_option('wpae_cron_scheduler_exports');
-});
+}
 
 add_action('init', function () {
-    if (class_exists('PMXE_Plugin')) {
-
-        // Global constants
-        define('WPAE_CRSCH_VERSION', '1.0.0');
-        define('WPAE_CRSCH_DIR', plugin_dir_path(__FILE__));
-        define('WPAE_CRSCH_URL', plugin_dir_url(__FILE__));
-        define('WPAE_CRSCH_TD', 'wp-all-export-cron-scheduler');
-
-        // Includes
-        require_once 'inc/AdminSettings.php';
-        require_once 'inc/WPAE.php';
-        require_once 'inc/CronJobs.php';
-    }
+    // Includes
+    require_once 'inc/AdminSettings.php';
+    require_once 'inc/WPAE.php';
+    require_once 'inc/CronJobs.php';
 
     /**
      * Admin assets
