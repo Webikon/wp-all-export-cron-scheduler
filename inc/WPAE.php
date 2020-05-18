@@ -1,6 +1,6 @@
 <?php
 
-namespace WpaeCrsch;
+namespace Webikon\WpAllExport\Scheduler;
 
 use PMXE_Plugin;
 use PMXE_Export_Record;

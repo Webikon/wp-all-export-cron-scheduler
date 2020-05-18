@@ -1,12 +1,16 @@
 <?php
 
-namespace WpaeCrsch;
+namespace Webikon\WpAllExport\Scheduler;
 
 use PMXE_Plugin;
-use PMXE_Export_Record;
 
 class CronJobs
 {
+    /**
+     * @var array Local storage for list of events.
+     */
+    private static $events;
+
     /**
      * Define cron jobs for automated exports.
      */
@@ -83,14 +87,17 @@ class CronJobs
      */
     public static function getEvents()
     {
-        $exports = get_option('wpae_cron_scheduler_exports');
+        if (is_array(self::$events)) {
+            //  event already loaded
+            return self::$events;
+        }
 
+        $exports = get_option('wpae_cron_scheduler_exports');
         if (!$exports) {
             return [];
         }
 
         $events = [];
-
         foreach ($exports as $export_id) {
             $events[$export_id] = WPAE::getExportNameByID($export_id);
         }
@@ -98,4 +105,3 @@ class CronJobs
         return $events;
     }
 }
-new CronJobs;

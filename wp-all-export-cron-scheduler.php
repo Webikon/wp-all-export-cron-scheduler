@@ -52,10 +52,8 @@ register_activation_hook(__FILE__, function () {
  * Deactivation hook.
  */
 register_deactivation_hook(__FILE__, function () {
-    $cron_jobs = new WpaeCrsch\CronJobs;
-
-    if ($cron_jobs->getEvents()) {
-        $cron_jobs->remove();
+    if (Webikon\WpAllExport\Scheduler\CronJobs::getEvents()) {
+        Webikon\WpAllExport\Scheduler\CronJobs::remove();
     }
 });
 
@@ -63,10 +61,8 @@ register_deactivation_hook(__FILE__, function () {
  * Uninstall plugin.
  */
 function wpae_crsch_uninstall_hook() {
-    $cron_jobs = new WpaeCrsch\CronJobs;
-
-    if ($cron_jobs->getEvents()) {
-        $cron_jobs->remove();
+    if (Webikon\WpAllExport\Scheduler\CronJobs::getEvents()) {
+        Webikon\WpAllExport\Scheduler\CronJobsremove();
     }
 
     delete_option('wpae_cron_scheduler_exports');
@@ -74,13 +70,13 @@ function wpae_crsch_uninstall_hook() {
 
 add_action('init', function () {
     // Includes
-    require_once 'inc/AdminSettings.php';
-    require_once 'inc/WPAE.php';
-    require_once 'inc/CronJobs.php';
+    require_once 'inc' . DIRECTORY_SEPARATOR . 'AdminSettings.php';
+    require_once 'inc' . DIRECTORY_SEPARATOR . 'WPAE.php';
+    require_once 'inc' . DIRECTORY_SEPARATOR . 'CronJobs.php';
 
     // Cron jobs define/add
-    WpaeCrsch\CronJobs::define();
-    WpaeCrsch\CronJobs::add();
+    Webikon\WpAllExport\Scheduler\CronJobs::define();
+    Webikon\WpAllExport\Scheduler\CronJobs::add();
 
     /**
      * Admin assets

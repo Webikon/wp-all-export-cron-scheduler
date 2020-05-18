@@ -1,6 +1,6 @@
 <?php
 
-namespace WpaeCrsch;
+namespace Webikon\WpAllExport\Scheduler;
 
 class AdminSettings
 {
