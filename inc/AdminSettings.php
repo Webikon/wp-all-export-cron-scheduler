@@ -75,17 +75,21 @@ class AdminSettings
         ?>
 
         <ul id="wpae-crsch-exports-list">
-            <?php foreach ($exports as $export_id): ?>
+            <?php foreach ($exports as $key => $export): ?>
                 <li class="wpae-crsch-export-item">
-                    <select name="wpae_cron_scheduler_exports[]">
+                    <select class="wpae-crsch-input" name="wpae_cron_scheduler_exports[<?php echo $key ?>][id]">
                         <option value="">-- <?php _e('Select an export from the list', WPAE_CRSCH_TD) ?> --</option>
 
                         <?php foreach ($wpae_exports as $wpae_export): ?>
-                            <option value="<?php echo $wpae_export->id ?>" <?php echo $wpae_export->id == $export_id ? 'selected' : '' ?>>
+                            <option value="<?php echo $wpae_export->id ?>" <?php echo !empty($export['id']) && $wpae_export->id == $export['id'] ? 'selected' : '' ?>>
                                 <?php echo "#ID:$wpae_export->id - $wpae_export->friendly_name" ?>
                             </option>
                         <?php endforeach ?>
                     </select>
+
+                    <label>
+                        <input class="wpae-crsch-input" type="checkbox" name="wpae_cron_scheduler_exports[<?php echo $key ?>][is_wc_products]" value="1" <?php echo !empty($export['is_wc_products']) ? 'checked="checked"' : '' ?>> <?php _e('Check if is the WooCommerce products export', WPAE_CRSCH_TD) ?>
+                    </label>
 
                     <span id="delete-link">
                         <a href="#" class="delete js-wpae-crsch-remove-item">

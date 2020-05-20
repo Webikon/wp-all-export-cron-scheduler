@@ -98,8 +98,8 @@ class CronJobs
         }
 
         $events = [];
-        foreach ($exports as $export_id) {
-            $events[$export_id] = WPAE::getExportNameByID($export_id);
+        foreach ($exports as $export) {
+            $events[$export['id']] = WPAE::getExportNameByID($export['id']);
         }
 
         return $events;

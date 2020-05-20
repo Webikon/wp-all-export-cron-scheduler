@@ -6,7 +6,19 @@ jQuery(function ($) {
     $(document).on('click', '.js-wpae-crsch-add-item', function (e) {
         e.preventDefault();
 
-        $('.wpae-crsch-export-item:last').clone().appendTo(exportsList).find('select > option').removeAttr('selected');
+        var itemsCount = exportsList.children().length;
+
+        $('.wpae-crsch-export-item:last')
+            .clone()
+            .appendTo(exportsList)
+            .find('.wpae-crsch-input, .wpae-crsch-input > option')
+                .removeAttr('selected')
+                .removeAttr('checked')
+                .attr('name', function (index, currentvalue) {
+                    if (currentvalue) {
+                        return currentvalue.replace(/[0-9]/, itemsCount);
+                    }
+                });
     });
 
     // Remove export item
