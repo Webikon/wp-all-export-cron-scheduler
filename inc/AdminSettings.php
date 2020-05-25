@@ -21,7 +21,7 @@ class AdminSettings
             __('WPAE Cron Sheduler', WPAE_CRSCH_TD), // Menu title
             'manage_options', // Capability
             'wpae-cron-scheduler', // Menu slug
-            [$this, 'adminSubpageCallback'], // Callback function
+            [$this, 'adminSubpageCallback'] // Callback function
         );
     }
 
@@ -87,9 +87,11 @@ class AdminSettings
                         <?php endforeach ?>
                     </select>
 
-                    <label>
-                        <input class="wpae-crsch-input" type="checkbox" name="wpae_cron_scheduler_exports[<?php echo $key ?>][is_wc_products]" value="1" <?php echo !empty($export['is_wc_products']) ? 'checked="checked"' : '' ?>> <?php _e('Check if is the WooCommerce products export', WPAE_CRSCH_TD) ?>
-                    </label>
+                    <?php if (is_plugin_active('woocommerce/woocommerce.php')): ?>
+                        <label>
+                            <input class="wpae-crsch-input" type="checkbox" name="wpae_cron_scheduler_exports[<?php echo $key ?>][is_wc_products]" value="1" <?php echo !empty($export['is_wc_products']) ? 'checked="checked"' : '' ?>> <?php _e('Check if is the WooCommerce products export', WPAE_CRSCH_TD) ?>
+                        </label>
+                    <?php endif ?>
 
                     <span id="delete-link">
                         <a href="#" class="delete js-wpae-crsch-remove-item">
