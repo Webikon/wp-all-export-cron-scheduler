@@ -89,3 +89,13 @@ add_action('init', function () {
         wp_enqueue_script('wpae_crsch_admin', WPAE_CRSCH_URL . 'assets/js/wpae-crsch-admin.js', [], WPAE_CRSCH_VERSION);
     });
 });
+
+/**
+ * Get exports list
+ *
+ * @return array
+ */
+function wpae_crsch_get_exports_list()
+{
+    return get_option('wpae_cron_scheduler_exports');;
+}
