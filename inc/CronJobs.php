@@ -2,6 +2,8 @@
 
 namespace Webikon\WpAllExport\Scheduler;
 
+use Inpsyde\Wonolog\Channels;
+use Monolog\Logger;
 use PMXE_Plugin;
 
 class CronJobs
@@ -25,13 +27,19 @@ class CronJobs
 
         foreach (self::getEvents() as $id => $name) {
             // This check needs to be run every 5-10 minutes
-            add_action($name . '_exec', function () use ($id) {
-                wp_remote_get(home_url("/wp-load.php?export_key=$cron_job_key&export_id=$id&action=processing"), array('timeout' => 600));
+            add_action($name . '_exec', function () use ($id, $name, $cron_job_key) {
+                $response = wp_remote_get(home_url("/wp-load.php?export_key=$cron_job_key&export_id=$id&action=processing"), array('timeout' => 600));
+                if (is_wp_error($response)) {
+                    do_action('wonolog.log', $response, 300, 'HTTP');
+                }
             });
 
             // Trigger can be run e.g. every 24 hour
-            add_action($name . '_trigger', function () use ($id) {
-                wp_remote_get(home_url("/wp-cron.php?export_key=$cron_job_key&export_id=$id&action=trigger"), array('timeout' => 600));
+            add_action($name . '_trigger', function () use ($id, $name, $cron_job_key) {
+                $response = wp_remote_get(home_url("/wp-cron.php?export_key=$cron_job_key&export_id=$id&action=trigger"), array('timeout' => 600));
+                if (is_wp_error($response)) {
+                    do_action('wonolog.log', $response, 300, 'HTTP');
+                }
             });
         }
     }

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "Project-Id-Version: WP All Export Cron Scheduler\n"
-"POT-Creation-Date: 2020-05-18 11:55+0200\n"
+"POT-Creation-Date: 2020-05-26 10:49+0200\n"
 "PO-Revision-Date: 2020-05-18 11:55+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -16,28 +16,32 @@ msgstr ""
 "X-Poedit-WPHeader: wp-all-export-cron-scheduler.php\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
-"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
-"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;"
+"_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.min.js\n"
 
 #: inc/AdminSettings.php:20 inc/AdminSettings.php:21 inc/AdminSettings.php:36
-msgid "WPAE Cron Sheduler"
+msgid "WPAE Cron Scheduler"
 msgstr ""
 
 #: inc/AdminSettings.php:61
 msgid "Exports list"
 msgstr ""
 
-#: inc/AdminSettings.php:81
+#: inc/AdminSettings.php:82
 msgid "Select an export from the list"
 msgstr ""
 
-#: inc/AdminSettings.php:92
+#: inc/AdminSettings.php:93
+msgid "Check if is the WooCommerce products export"
+msgstr ""
+
+#: inc/AdminSettings.php:99
 msgid "Remove"
 msgstr ""
 
-#: inc/AdminSettings.php:101
+#: inc/AdminSettings.php:108
 msgid "Add export"
 msgstr ""
 

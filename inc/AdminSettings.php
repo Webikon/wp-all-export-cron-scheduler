@@ -17,8 +17,8 @@ class AdminSettings
     {
         add_submenu_page(
             'options-general.php', // Parent slug
-            __('WPAE Cron Sheduler', WPAE_CRSCH_TD), // Page title
-            __('WPAE Cron Sheduler', WPAE_CRSCH_TD), // Menu title
+            __('WPAE Cron Scheduler', WPAE_CRSCH_TD), // Page title
+            __('WPAE Cron Scheduler', WPAE_CRSCH_TD), // Menu title
             'manage_options', // Capability
             'wpae-cron-scheduler', // Menu slug
             [$this, 'adminSubpageCallback'] // Callback function
@@ -33,7 +33,7 @@ class AdminSettings
         ?>
 
         <div class="wrap">
-            <h1><?php _e('WPAE Cron Sheduler', WPAE_CRSCH_TD) ?></h1>
+            <h1><?php _e('WPAE Cron Scheduler', WPAE_CRSCH_TD) ?></h1>
 
             <form action='options.php' method='post'>
                 <?php
@@ -72,6 +72,7 @@ class AdminSettings
         $exports = get_option('wpae_cron_scheduler_exports') ?: [''];
 
         $wpae_exports = WPAE::getExports();
+        $is_woocommerce_active = is_plugin_active('woocommerce/woocommerce.php');
         ?>
 
         <ul id="wpae-crsch-exports-list">
@@ -87,7 +88,7 @@ class AdminSettings
                         <?php endforeach ?>
                     </select>
 
-                    <?php if (is_plugin_active('woocommerce/woocommerce.php')): ?>
+                    <?php if ($is_woocommerce_active): ?>
                         <label>
                             <input class="wpae-crsch-input" type="checkbox" name="wpae_cron_scheduler_exports[<?php echo $key ?>][is_wc_products]" value="1" <?php echo !empty($export['is_wc_products']) ? 'checked="checked"' : '' ?>> <?php _e('Check if is the WooCommerce products export', WPAE_CRSCH_TD) ?>
                         </label>
