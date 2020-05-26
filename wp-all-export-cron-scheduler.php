@@ -74,9 +74,17 @@ add_action('init', function () {
     require_once 'inc' . DIRECTORY_SEPARATOR . 'WPAE.php';
     require_once 'inc' . DIRECTORY_SEPARATOR . 'CronJobs.php';
 
+
     // Cron jobs define/add
-    Webikon\WpAllExport\Scheduler\CronJobs::define();
-    Webikon\WpAllExport\Scheduler\CronJobs::add();
+    if (isset($_GET['add-wpae-cron-events'])) {
+        Webikon\WpAllExport\Scheduler\CronJobs::define();
+        Webikon\WpAllExport\Scheduler\CronJobs::add();
+    }
+
+    // Remove cron jobs
+    if (isset($_GET['remove-wpae-cron-events'])) {
+        Webikon\WpAllExport\Scheduler\CronJobs::remove();
+    }
 
     /**
      * Admin assets
