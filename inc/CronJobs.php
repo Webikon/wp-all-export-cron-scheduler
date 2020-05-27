@@ -29,6 +29,7 @@ class CronJobs
             // This check needs to be run every 5-10 minutes
             add_action($name . '_exec', function () use ($id, $name, $cron_job_key) {
                 $response = wp_remote_get(home_url("/wp-load.php?export_key=$cron_job_key&export_id=$id&action=processing"), array('timeout' => 600));
+
                 if (is_wp_error($response)) {
                     do_action('wonolog.log', $response, 300, 'HTTP');
                 }
@@ -37,6 +38,7 @@ class CronJobs
             // Trigger can be run e.g. every 24 hour
             add_action($name . '_trigger', function () use ($id, $name, $cron_job_key) {
                 $response = wp_remote_get(home_url("/wp-cron.php?export_key=$cron_job_key&export_id=$id&action=trigger"), array('timeout' => 600));
+
                 if (is_wp_error($response)) {
                     do_action('wonolog.log', $response, 300, 'HTTP');
                 }
@@ -56,7 +58,7 @@ class CronJobs
         foreach (self::getEvents() as $id => $name) {
             if (!wp_next_scheduled($name . '_exec')) {
                 // Run execs every 5 minutes
-                wp_schedule_event(time() + 300, MINUTE_IN_SECONDS * 5, $name . '_exec');
+                wp_schedule_event(time() + 300, 'wpae_crsch_every_5_minutes', $name . '_exec');
             }
 
             if (!wp_next_scheduled($name . '_trigger')) {

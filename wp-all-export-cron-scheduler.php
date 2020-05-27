@@ -62,7 +62,7 @@ register_deactivation_hook(__FILE__, function () {
  */
 function wpae_crsch_uninstall_hook() {
     if (Webikon\WpAllExport\Scheduler\CronJobs::getEvents()) {
-        Webikon\WpAllExport\Scheduler\CronJobsremove();
+        Webikon\WpAllExport\Scheduler\CronJobs::remove();
     }
 
     delete_option('wpae_cron_scheduler_exports');
@@ -97,6 +97,34 @@ add_action('init', function () {
         wp_enqueue_script('wpae_crsch_admin', WPAE_CRSCH_URL . 'assets/js/wpae-crsch-admin.js', [], WPAE_CRSCH_VERSION);
     });
 });
+
+/**
+ * Add more cron schedules.
+ */
+add_filter('cron_schedules', function ($schedules) {
+    $schedules['wpae_crsch_every_5_minutes'] = array(
+        'interval' => MINUTE_IN_SECONDS * 5,
+        'display'  => __('Every 5 minutes', WPAE_CRSCH_TD),
+    );
+
+    return $schedules;
+});
+
+/**
+ * Define and add cron jobs after add setting "wpae_cron_scheduler_exports"
+ */
+add_action('add_option_wpae_cron_scheduler_exports', function ($option_name, $option_value) {
+    Webikon\WpAllExport\Scheduler\CronJobs::define();
+    Webikon\WpAllExport\Scheduler\CronJobs::add();
+}, 10, 2);
+
+/**
+ * Define and add cron jobs after update setting "wpae_cron_scheduler_exports"
+ */
+add_action('update_option_wpae_cron_scheduler_exports', function ($option_name, $old_value, $new_value) {
+    Webikon\WpAllExport\Scheduler\CronJobs::define();
+    Webikon\WpAllExport\Scheduler\CronJobs::add();
+}, 10, 3);
 
 /**
  * Get exports list
