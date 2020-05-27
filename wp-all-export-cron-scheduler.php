@@ -45,6 +45,10 @@ register_activation_hook(__FILE__, function () {
         wp_die('Sorry, but this plugin requires the WP All Export plugin to be installed and active. <br><a href="' . admin_url( 'plugins.php' ) . '">&laquo; Return to plugins</a>');
     }
 
+    // Add cron jobs
+    wpae_crsch_add_cron_jobs();
+
+    // Register uninstall hook
     register_uninstall_hook(__FILE__, 'wpae_crsch_uninstall_hook');
 });
 
@@ -68,17 +72,18 @@ function wpae_crsch_uninstall_hook() {
     delete_option('wpae_cron_scheduler_exports');
 }
 
+// Includes
+require_once 'inc' . DIRECTORY_SEPARATOR . 'AdminSettings.php';
+require_once 'inc' . DIRECTORY_SEPARATOR . 'WPAE.php';
+require_once 'inc' . DIRECTORY_SEPARATOR . 'CronJobs.php';
+
+/**
+ * Plugin setup
+ */
 add_action('init', function () {
-    // Includes
-    require_once 'inc' . DIRECTORY_SEPARATOR . 'AdminSettings.php';
-    require_once 'inc' . DIRECTORY_SEPARATOR . 'WPAE.php';
-    require_once 'inc' . DIRECTORY_SEPARATOR . 'CronJobs.php';
-
-
     // Cron jobs define/add
     if (isset($_GET['add-wpae-cron-events'])) {
-        Webikon\WpAllExport\Scheduler\CronJobs::define();
-        Webikon\WpAllExport\Scheduler\CronJobs::add();
+        wpae_crsch_add_cron_jobs();
     }
 
     // Remove cron jobs
@@ -114,20 +119,27 @@ add_filter('cron_schedules', function ($schedules) {
  * Define and add cron jobs after add setting "wpae_cron_scheduler_exports"
  */
 add_action('add_option_wpae_cron_scheduler_exports', function ($option_name, $option_value) {
-    Webikon\WpAllExport\Scheduler\CronJobs::define();
-    Webikon\WpAllExport\Scheduler\CronJobs::add();
+    wpae_crsch_add_cron_jobs();
 }, 10, 2);
 
 /**
  * Define and add cron jobs after update setting "wpae_cron_scheduler_exports"
  */
 add_action('update_option_wpae_cron_scheduler_exports', function ($option_name, $old_value, $new_value) {
-    Webikon\WpAllExport\Scheduler\CronJobs::define();
-    Webikon\WpAllExport\Scheduler\CronJobs::add();
+    wpae_crsch_add_cron_jobs();
 }, 10, 3);
 
 /**
- * Get exports list
+ * Add cron jobs helper
+ */
+function wpae_crsch_add_cron_jobs()
+{
+    Webikon\WpAllExport\Scheduler\CronJobs::define();
+    Webikon\WpAllExport\Scheduler\CronJobs::add();
+}
+
+/**
+ * Get exports list helper
  *
  * @return array
  */
