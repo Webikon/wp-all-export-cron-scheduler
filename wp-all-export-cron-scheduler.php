@@ -99,6 +99,7 @@ add_action('init', function () {
             return;
         }
 
+        wp_enqueue_style('wpae_crsch_admin', WPAE_CRSCH_URL . 'assets/css/wpae-crsch-admin.css', [], WPAE_CRSCH_VERSION);
         wp_enqueue_script('wpae_crsch_admin', WPAE_CRSCH_URL . 'assets/js/wpae-crsch-admin.js', [], WPAE_CRSCH_VERSION);
     });
 });

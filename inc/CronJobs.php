@@ -25,8 +25,10 @@ class CronJobs
             return;
         }
 
-        foreach (self::getEvents() as $id => $name) {
-            // This check needs to be run every 5-10 minutes
+        foreach (self::getEvents() as $id => $event) {
+            $name = $event['name'];
+
+            // Processing
             add_action($name . '_exec', function () use ($id, $name, $cron_job_key) {
                 $response = wp_remote_get(home_url("/wp-load.php?export_key=$cron_job_key&export_id=$id&action=processing"), array('timeout' => 600));
 
@@ -35,7 +37,7 @@ class CronJobs
                 }
             });
 
-            // Trigger can be run e.g. every 24 hour
+            // Trigger
             add_action($name . '_trigger', function () use ($id, $name, $cron_job_key) {
                 $response = wp_remote_get(home_url("/wp-cron.php?export_key=$cron_job_key&export_id=$id&action=trigger"), array('timeout' => 600));
 
@@ -55,17 +57,13 @@ class CronJobs
             return;
         }
 
-        foreach (self::getEvents() as $id => $name) {
-            if (!wp_next_scheduled($name . '_exec')) {
-                // Run execs every 5 minutes
-                wp_schedule_event(time() + 300, 'wpae_crsch_every_5_minutes', $name . '_exec');
+        foreach (self::getEvents() as $id => $event) {
+            if (!wp_next_scheduled($event['name'] . '_exec')) {
+                wp_schedule_event(strtotime($event['processing']['next_run']), $event['processing']['recurrence'], $event['name'] . '_exec');
             }
 
-            if (!wp_next_scheduled($name . '_trigger')) {
-                // Run triggers every 24 hours
-                $current_time = current_time('timestamp');
-                $next_scheduled_time = strtotime('tomorrow midnight +2 hours', $current_time);
-                wp_schedule_event($next_scheduled_time, 'daily', $name . '_trigger');
+            if (!wp_next_scheduled($event['name'] . '_trigger')) {
+                wp_schedule_event(strtotime($event['trigger']['next_run']), $event['trigger']['recurrence'], $event['name'] . '_trigger');
             }
         }
     }
@@ -79,13 +77,13 @@ class CronJobs
             return;
         }
 
-        foreach (self::getEvents() as $name) {
-            if (wp_next_scheduled($name . '_exec')) {
-                wp_clear_scheduled_hook($name . '_exec');
+        foreach (self::getEvents() as $event) {
+            if (wp_next_scheduled($event['name'] . '_exec')) {
+                wp_clear_scheduled_hook($event['name'] . '_exec');
             }
 
-            if (wp_next_scheduled($name . '_trigger')) {
-                wp_clear_scheduled_hook($name . '_trigger');
+            if (wp_next_scheduled($event['name'] . '_trigger')) {
+                wp_clear_scheduled_hook($event['name'] . '_trigger');
             }
         }
     }
@@ -109,7 +107,12 @@ class CronJobs
 
         $events = [];
         foreach ($exports as $export) {
-            $events[$export['id']] = WPAE::getExportNameByID($export['id']);
+
+            $events[$export['id']] = [
+                'name' => WPAE::getExportNameByID($export['id']),
+                'processing' => $export['processing'],
+                'trigger' => $export['trigger']
+            ];
         }
 
         return $events;

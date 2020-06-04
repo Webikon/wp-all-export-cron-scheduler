@@ -1,0 +1,17 @@
+
+.wpae-crsch-export-item {
+    position: relative;
+    margin-bottom: 1rem;
+    padding: 0 1.5rem 0.5rem;
+    border: 1px solid #bbb;
+}
+
+.wpae-crsch-export-item #delete-link {
+    position: absolute;
+    top: 0;
+    right: 0.75rem;
+}
+
+.wpae-crsch-bdb {
+    border-bottom: 1px solid #ccc;
+}

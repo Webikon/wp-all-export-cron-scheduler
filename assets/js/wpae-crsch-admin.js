@@ -29,4 +29,11 @@ jQuery(function ($) {
 
         $(this).closest(cloneItem).remove();
     });
+
+    // Uncheck radios after focus on field
+    $(document).on('focus', '.js-wpae-crsch-uncheck', function (e) {
+        e.preventDefault();
+
+        $('.wpae-crsch-next-run').removeAttr('checked');
+    });
 });
