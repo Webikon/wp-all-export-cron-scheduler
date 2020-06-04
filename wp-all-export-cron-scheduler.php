@@ -46,7 +46,7 @@ register_activation_hook(__FILE__, function () {
     }
 
     // Add cron jobs
-    wpae_crsch_add_cron_jobs();
+    Webikon\WpAllExport\Scheduler\CronJobs::add();
 
     // Register uninstall hook
     register_uninstall_hook(__FILE__, 'wpae_crsch_uninstall_hook');
@@ -83,7 +83,7 @@ require_once 'inc' . DIRECTORY_SEPARATOR . 'CronJobs.php';
 add_action('init', function () {
     // Cron jobs define/add
     if (isset($_GET['add-wpae-cron-events'])) {
-        wpae_crsch_add_cron_jobs();
+        Webikon\WpAllExport\Scheduler\CronJobs::add();
     }
 
     // Remove cron jobs
@@ -105,6 +105,40 @@ add_action('init', function () {
 });
 
 /**
+ * Define cron jobs for automated exports.
+ */
+add_action('init', function () {
+    if (!($cron_events = Webikon\WpAllExport\Scheduler\CronJobs::getEvents())) {
+        return;
+    }
+
+    // Get cron jobs key from WP All Export
+    $cron_job_key = PMXE_Plugin::getInstance()->getOption('cron_job_key');
+
+    foreach ($cron_events as $id => $event) {
+        $name = $event['name'];
+
+        // Processing
+        add_action($name . '_exec', function () use ($id, $name, $cron_job_key) {
+            $response = wp_remote_get(home_url("/wp-load.php?export_key=$cron_job_key&export_id=$id&action=processing"), array('timeout' => 600));
+
+            if (is_wp_error($response)) {
+                do_action('wonolog.log', $response, 300, 'HTTP');
+            }
+        });
+
+        // Trigger
+        add_action($name . '_trigger', function () use ($id, $name, $cron_job_key) {
+            $response = wp_remote_get(home_url("/wp-load.php?export_key=$cron_job_key&export_id=$id&action=trigger"), array('timeout' => 600));
+
+            if (is_wp_error($response)) {
+                do_action('wonolog.log', $response, 300, 'HTTP');
+            }
+        });
+    }
+});
+
+/**
  * Add more cron schedules.
  */
 add_filter('cron_schedules', function ($schedules) {
@@ -120,24 +154,17 @@ add_filter('cron_schedules', function ($schedules) {
  * Define and add cron jobs after add setting "wpae_cron_scheduler_exports"
  */
 add_action('add_option_wpae_cron_scheduler_exports', function ($option_name, $option_value) {
-    wpae_crsch_add_cron_jobs();
+    Webikon\WpAllExport\Scheduler\CronJobs::remove();
+    Webikon\WpAllExport\Scheduler\CronJobs::add();
 }, 10, 2);
 
 /**
  * Define and add cron jobs after update setting "wpae_cron_scheduler_exports"
  */
 add_action('update_option_wpae_cron_scheduler_exports', function ($option_name, $old_value, $new_value) {
-    wpae_crsch_add_cron_jobs();
-}, 10, 3);
-
-/**
- * Add cron jobs helper
- */
-function wpae_crsch_add_cron_jobs()
-{
-    Webikon\WpAllExport\Scheduler\CronJobs::define();
+    Webikon\WpAllExport\Scheduler\CronJobs::remove();
     Webikon\WpAllExport\Scheduler\CronJobs::add();
-}
+}, 10, 3);
 
 /**
  * Get exports list helper
@@ -146,5 +173,5 @@ function wpae_crsch_add_cron_jobs()
  */
 function wpae_crsch_get_exports_list()
 {
-    return get_option('wpae_cron_scheduler_exports');;
+    return get_option('wpae_cron_scheduler_exports');
 }

@@ -14,41 +14,6 @@ class CronJobs
     private static $events;
 
     /**
-     * Define cron jobs for automated exports.
-     */
-    public static function define()
-    {
-        // Get cron jobs key from WP All Export
-        $cron_job_key = PMXE_Plugin::getInstance()->getOption('cron_job_key');
-
-        if (!self::getEvents()) {
-            return;
-        }
-
-        foreach (self::getEvents() as $id => $event) {
-            $name = $event['name'];
-
-            // Processing
-            add_action($name . '_exec', function () use ($id, $name, $cron_job_key) {
-                $response = wp_remote_get(home_url("/wp-load.php?export_key=$cron_job_key&export_id=$id&action=processing"), array('timeout' => 600));
-
-                if (is_wp_error($response)) {
-                    do_action('wonolog.log', $response, 300, 'HTTP');
-                }
-            });
-
-            // Trigger
-            add_action($name . '_trigger', function () use ($id, $name, $cron_job_key) {
-                $response = wp_remote_get(home_url("/wp-cron.php?export_key=$cron_job_key&export_id=$id&action=trigger"), array('timeout' => 600));
-
-                if (is_wp_error($response)) {
-                    do_action('wonolog.log', $response, 300, 'HTTP');
-                }
-            });
-        }
-    }
-
-    /**
      * Add cron jobs events.
      */
     public static function add()
