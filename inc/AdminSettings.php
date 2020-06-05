@@ -133,8 +133,6 @@ class AdminSettings
 
                                     <td>
                                         <select class="wpae-crsch-input" id="recurrence" name="wpae_cron_scheduler_exports[<?php echo $key ?>][<?php echo $type_key ?>][recurrence]">
-                                            <option value="non-repeating"><?php _e('Non-repeating', WPAE_CRSCH_TD) ?></option>
-
                                             <?php foreach (wp_get_schedules() as $schedule_key => $schedule): ?>
                                                 <option value="<?php echo $schedule_key ?>" <?php echo !empty($export[$type_key]['recurrence']) && $schedule_key == $export[$type_key]['recurrence'] ? 'selected' : '' ?>>
                                                     <?php echo $schedule['display'] ?>
