@@ -35,6 +35,7 @@ define('WPAE_CRSCH_VERSION', '1.0.0');
 define('WPAE_CRSCH_DIR', plugin_dir_path(__FILE__));
 define('WPAE_CRSCH_URL', plugin_dir_url(__FILE__));
 define('WPAE_CRSCH_TD', 'wp-all-export-cron-scheduler');
+define('WPAE_CRSCH_PREFIX', 'wpaecrsch_');
 
 /**
  * Activate the plugin.
@@ -119,7 +120,7 @@ add_action('init', function () {
         $name = $event['name'];
 
         // Processing
-        add_action($name . '_exec', function () use ($id, $name, $cron_job_key) {
+        add_action($name . '_processing', function () use ($id, $name, $cron_job_key) {
             $response = wp_remote_get(home_url("/wp-load.php?export_key=$cron_job_key&export_id=$id&action=processing"), array('timeout' => 600));
 
             if (is_wp_error($response)) {

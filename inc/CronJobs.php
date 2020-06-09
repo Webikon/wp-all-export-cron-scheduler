@@ -23,8 +23,8 @@ class CronJobs
         }
 
         foreach (self::getEvents() as $id => $event) {
-            if (!wp_next_scheduled($event['name'] . '_exec')) {
-                wp_schedule_event(strtotime($event['processing']['next_run']), $event['processing']['recurrence'], $event['name'] . '_exec');
+            if (!wp_next_scheduled($event['name'] . '_processing')) {
+                wp_schedule_event(strtotime($event['processing']['next_run']), $event['processing']['recurrence'], $event['name'] . '_processing');
             }
 
             if (!wp_next_scheduled($event['name'] . '_trigger')) {
@@ -43,8 +43,8 @@ class CronJobs
         }
 
         foreach (self::getEvents() as $event) {
-            if (wp_next_scheduled($event['name'] . '_exec')) {
-                wp_clear_scheduled_hook($event['name'] . '_exec');
+            if (wp_next_scheduled($event['name'] . '_processing')) {
+                wp_clear_scheduled_hook($event['name'] . '_processing');
             }
 
             if (wp_next_scheduled($event['name'] . '_trigger')) {
@@ -74,7 +74,7 @@ class CronJobs
         foreach ($exports as $export) {
 
             $events[$export['id']] = [
-                'name' => WPAE::getExportNameByID($export['id']),
+                'name' => WPAE_CRSCH_PREFIX . WPAE::getExportNameByID($export['id']),
                 'processing' => $export['processing'],
                 'trigger' => $export['trigger']
             ];
