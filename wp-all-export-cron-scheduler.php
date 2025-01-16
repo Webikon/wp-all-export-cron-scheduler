@@ -41,9 +41,15 @@ define('WPAE_CRSCH_PREFIX', 'wpaecrsch_');
  * Activate the plugin.
  */
 register_activation_hook(__FILE__, function () {
-    // Die WordPress if is not activated WP All Export plugin
-    if (!is_plugin_active('wp-all-export-pro/wp-all-export-pro.php') || !class_exists('PMXE_Plugin')) {
-        wp_die('Sorry, but this plugin requires the WP All Export plugin to be installed and active. <br><a href="' . admin_url( 'plugins.php' ) . '">&laquo; Return to plugins</a>');
+    // Check if WP All Export plugin is installed and activated
+    if (!is_plugin_active('wp-all-export-pro/wp-all-export-pro.php') || 
+        !class_exists('PMXE_Plugin') || 
+        !class_exists('PMXE_Export_Record')) {
+        deactivate_plugins(plugin_basename(__FILE__));
+        wp_die(
+            'This plugin requires WP All Export Pro plugin to be installed and activated with all required classes. ' .
+            '<br><a href="' . admin_url('plugins.php') . '">&laquo; Return to plugins</a>'
+        );
     }
 
     // Add cron jobs
@@ -51,6 +57,11 @@ register_activation_hook(__FILE__, function () {
 
     // Register uninstall hook
     register_uninstall_hook(__FILE__, 'wpae_crsch_uninstall_hook');
+
+    // Add monitoring cron job
+    if (!wp_next_scheduled('wpaecrsch_monitor_cron_jobs')) {
+        wp_schedule_event(time(), 'hourly', 'wpaecrsch_monitor_cron_jobs');
+    }
 });
 
 /**
@@ -60,6 +71,8 @@ register_deactivation_hook(__FILE__, function () {
     if (Webikon\WpAllExport\Scheduler\CronJobs::getEvents()) {
         Webikon\WpAllExport\Scheduler\CronJobs::remove();
     }
+
+    wp_clear_scheduled_hook('wpaecrsch_monitor_cron_jobs');
 });
 
 /**
@@ -176,3 +189,6 @@ function wpae_crsch_get_exports_list()
 {
     return get_option('wpae_cron_scheduler_exports');
 }
+
+// Hook the monitoring function
+add_action('wpaecrsch_monitor_cron_jobs', ['\Webikon\WpAllExport\Scheduler\CronJobs', 'monitorCronJobs']);

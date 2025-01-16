@@ -30,6 +30,10 @@ class WPAE
      */
     public static function getExportNameByID($export_id)
     {
+        if (!class_exists('PMXE_Export_Record')) {
+            return 'export_' . $export_id;
+        }
+
         $wpae_export = new PMXE_Export_Record();
         $export = $wpae_export->getById($export_id);
 
@@ -37,6 +41,6 @@ class WPAE
             return str_replace('-', '_', sanitize_title($export->friendly_name));
         }
 
-        return;
+        return 'export_' . $export_id;
     }
 }
