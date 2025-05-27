@@ -57,11 +57,6 @@ register_activation_hook(__FILE__, function () {
 
     // Register uninstall hook
     register_uninstall_hook(__FILE__, 'wpae_crsch_uninstall_hook');
-
-    // Add monitoring cron job
-    if (!wp_next_scheduled('wpaecrsch_monitor_cron_jobs')) {
-        wp_schedule_event(time(), 'hourly', 'wpaecrsch_monitor_cron_jobs');
-    }
 });
 
 /**
@@ -124,6 +119,11 @@ add_action('init', function () {
 add_action('init', function () {
     if (!($cron_events = Webikon\WpAllExport\Scheduler\CronJobs::getEvents())) {
         return;
+    }
+
+    // Add monitoring cron job
+    if (!wp_next_scheduled('wpaecrsch_monitor_cron_jobs')) {
+        wp_schedule_event(time(), 'hourly', 'wpaecrsch_monitor_cron_jobs');
     }
 
     // Get cron jobs key from WP All Export
