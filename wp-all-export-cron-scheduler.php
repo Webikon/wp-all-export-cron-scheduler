@@ -160,6 +160,10 @@ add_filter('cron_schedules', function ($schedules) {
         'interval' => MINUTE_IN_SECONDS * 5,
         'display'  => __('Every 5 minutes', WPAE_CRSCH_TD),
     );
+    $schedules['wpae_crsch_every_15_minutes'] = array(
+        'interval' => MINUTE_IN_SECONDS * 15,
+        'display'  => __('Every 15 minutes', WPAE_CRSCH_TD),
+    );
 
     return $schedules;
 });
