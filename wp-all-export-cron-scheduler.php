@@ -3,7 +3,7 @@
  * Plugin Name:       WP All Export Cron Scheduler
  * Plugin URI:        https://webikon.sk/
  * Description:       Cron scheduler for WP All Export plugin.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Requires at least: 5.3
  * Requires PHP:      7.2
  * Author:            Webikon
@@ -134,8 +134,20 @@ add_action('init', function () {
 
         // Processing
         add_action($name . '_processing', function () use ($id, $name, $cron_job_key) {
+            global $wpdb;
+        
+            // If there's nothing waiting to be processed, there's no point in bootstrapping the entire WordPress environment via wp-load.php.
+            $state = $wpdb->get_row($wpdb->prepare(
+                "SELECT triggered, processing, executing FROM {$wpdb->prefix}pmxe_exports WHERE id = %d",
+                $id
+            ));
+        
+            if (!$state || (!$state->triggered && !$state->processing && !$state->executing)) {
+                return;
+            }
+        
             $response = wp_remote_get(home_url("/wp-load.php?export_key=$cron_job_key&export_id=$id&action=processing"), array('timeout' => 600));
-
+        
             if (is_wp_error($response)) {
                 do_action('wonolog.log', $response, 300, 'HTTP');
             }
